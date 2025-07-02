@@ -13,6 +13,8 @@ pub struct Px(u64);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Qty(u32);
 
+pub struct Ts(u64);
+
 impl OrderID {
     pub fn new(id: u64) -> Result<Self, &'static str> {
         if id == 0 {
