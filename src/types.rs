@@ -1,3 +1,7 @@
+use std::time::{Duration, SystemTime, SystemTimeError, UNIX_EPOCH};
+
+use chrono::{DateTime, Utc};
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct OrderID(u64);
 
@@ -13,7 +17,19 @@ pub struct Px(u64);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Qty(u32);
 
+/// A timestamp representing nanoseconds since the UNIX epoch.
+///
+/// TS is basically a lightweight wrapper around a u64 value in nanoseconds.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Ts(u64);
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Status {
+    Open,
+    PartiallyFilled,
+    FullyFilled,
+    Cancelled,
+}
 
 impl OrderID {
     pub fn new(id: u64) -> Result<Self, &'static str> {
@@ -89,5 +105,53 @@ impl Qty {
         };
 
         Qty(result)
+    }
+}
+
+impl Ts {
+    pub fn now() -> Self {
+        let time_now = SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos() as u64;
+
+        Ts(time_now)
+    }
+
+    pub fn from_nanos(nanos: u64) -> Self {
+        Ts(nanos)
+    }
+
+    pub fn is_before(&self, timestamp: u64) -> bool {
+        if self.0 < timestamp { true } else { false }
+    }
+
+    pub fn is_after(&self, timestamp: u64) -> bool {
+        if self.0 > timestamp { true } else { false }
+    }
+
+    pub fn duration_since(&self, time_in_nanos: u64) -> u64 {
+        if self.is_after(time_in_nanos) {
+            self.nanos() - time_in_nanos
+        } else {
+            time_in_nanos - self.nanos()
+        }
+    }
+
+    pub fn nanos(&self) -> u64 {
+        self.0
+    }
+
+    pub fn micros(&self) -> u64 {
+        self.0 / 1000
+    }
+
+    pub fn millis(&self) -> u64 {
+        self.0 / 1000000
+    }
+
+    pub fn to_utc_datetime(&self) -> DateTime<Utc> {
+        let system_time = UNIX_EPOCH + Duration::from_nanos(self.0);
+        system_time.into()
     }
 }
