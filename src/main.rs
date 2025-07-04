@@ -1,12 +1,9 @@
 use std::{thread, time::Duration};
 
-use crate::{
+use nyquestro::{
     order::Order,
     types::{OrderID, Px, Qty, Side, Ts},
 };
-
-mod order;
-mod types;
 
 fn main() {
     let time_now = Ts::now();
