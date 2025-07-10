@@ -19,12 +19,12 @@ The goal is to explore ultra-low-latency market-microstructure design by buildin
 ## Features & Roadmap
 
 ### **🔧 Core Infrastructure & Foundations**
-- [ ] Type-safe primitives – `OrderId`, `Side`, `Px`, `Qty`, `Ts`
+- [x] Type-safe primitives – `OrderId`, `Side`, `Px`, `Qty`, `Ts` 
 - [ ] Flat-combining slab allocator – O(1) inserts/removes, epoch GC
 - [ ] Atomic price buckets – intrusive FIFO lists per price level
 - [ ] Deterministic matcher loop – price-time sweep with partial-fill handling
-- [ ] Immutable event frames – zero-allocation structs for quotes & fills
-- [ ] Engine error enum – recoverable vs fatal classifications
+- [ ] Immutable event frames – zero-allocation structs for quotes & fills *in progress*
+- [ ] Engine error enum – recoverable vs fatal classifications *in progress*
 - [ ] Config loader – TOML / env with hot-reload signal
 
 ### **📡 Ingress & Market-Data Gateways**
