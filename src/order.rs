@@ -1,4 +1,7 @@
-use crate::types::{OrderID, Px, Qty, Side, Status, Ts};
+use crate::{
+    NyquestroError, NyquestroResult,
+    types::{OrderID, Px, Qty, Side, Status, Ts},
+};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Order {
@@ -12,14 +15,9 @@ pub struct Order {
 }
 
 impl Order {
-    pub fn new(
-        order_id: OrderID,
-        side: Side,
-        price: Px,
-        quantity: Qty,
-    ) -> Result<Order, &'static str> {
+    pub fn new(order_id: OrderID, side: Side, price: Px, quantity: Qty) -> NyquestroResult<Order> {
         if quantity.value() == 0 {
-            return Err("Orders with zero or less quantity are invalid.");
+            return Err(NyquestroError::InvalidQuantity);
         }
 
         Ok(Order {
@@ -45,16 +43,11 @@ impl Order {
         }
     }
 
-    pub fn fill(&mut self, fill_amount: Qty) -> String {
+    pub fn fill(&mut self, fill_amount: Qty) -> NyquestroResult<()> {
         self.remaining_quantity = self.remaining_quantity.saturating_sub(fill_amount);
         self.update_status();
 
-        format!(
-            "Filled {} number of orders for the order id {:?}. Current status: {:?}.",
-            fill_amount.value(),
-            self.order_id,
-            self.status
-        )
+        Ok(())
     }
 
     pub fn get_order_id(&self) -> OrderID {

@@ -136,10 +136,10 @@
 
 ### Files/Modules Likely to Change
 
-- [ ] `src/events.rs` – **NEW FILE** – all event type definitions
-- [ ] `src/errors.rs` – extend enum, add classification logic
-- [ ] `src/order.rs` – migrate `new()` to `NyquestroResult`, update `fill()` signature
-- [ ] `src/lib.rs` – export `events` module
+- [x] `src/events.rs` – **NEW FILE** – all event type definitions
+- [x] `src/errors.rs` – extend enum, add classification logic
+- [x] `src/order.rs` – migrate `new()` to `NyquestroResult`, update `fill()` signature
+- [x] `src/lib.rs` – export `events` module
 - [ ] `tests/events_test.rs` – **NEW FILE** – event construction and validation tests
 - [ ] `tests/errors_test.rs` – **NEW FILE** or extend existing – error classification tests
 
@@ -166,9 +166,9 @@
 
 **Checklist:**
 
-- [ ] `src/events.rs` created with basic struct definitions
-- [ ] All event types derive required traits (`Copy`, `Debug`, `Clone`, `PartialEq`, `Eq`)
-- [ ] Module exported in `src/lib.rs`
+- [x] `src/events.rs` created with basic struct definitions
+- [x] All event types derive required traits (`Copy`, `Debug`, `Clone`, `PartialEq`, `Eq`)
+- [x] Module exported in `src/lib.rs`
 
 ### Step 2: Implement FillEvent with Validation
 
@@ -178,9 +178,9 @@
 
 **Checklist:**
 
-- [ ] `FillEvent::new()` constructor with validation
-- [ ] Getters for all fields
-- [ ] Unit tests in `tests/events_test.rs`
+- [x] `FillEvent::new()` constructor with validation
+- [x] Getters for all fields
+- [x] Unit tests in `tests/events_test.rs`
 
 ### Step 3: Implement QuoteEvent
 
@@ -190,9 +190,9 @@
 
 **Checklist:**
 
-- [ ] `QuoteEvent::new()` constructor with validation
-- [ ] Getters for all fields
-- [ ] Unit tests
+- [x] `QuoteEvent::new()` constructor with validation
+- [x] Getters for all fields
+- [x] Unit tests
 
 ### Step 4: Implement OrderEvent and OrderRejectionReason
 

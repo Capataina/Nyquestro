@@ -34,7 +34,7 @@ fn main() {
         debug_order.clone().get_status()
     );
 
-    debug_order.fill(Qty::new(4));
+    debug_order.fill(Qty::new(4)).unwrap();
 
     println!(
         "Order ID: {:?}, Order Side: {:?}, Order Price: {:?}, Order Quantity: {:?}, Order Remaining Quantity: {:?}, Order Status: {:?}.",
@@ -46,7 +46,7 @@ fn main() {
         debug_order.clone().get_status()
     );
 
-    debug_order.fill(Qty::new(6));
+    debug_order.fill(Qty::new(6)).unwrap();
 
     println!(
         "Order ID: {:?}, Order Side: {:?}, Order Price: {:?}, Order Quantity: {:?}, Order Remaining Quantity: {:?}, Order Status: {:?}.",
