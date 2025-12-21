@@ -31,7 +31,7 @@ impl Order {
         })
     }
 
-    pub fn update_status(&mut self) {
+    pub fn update_status(&mut self) -> NyquestroResult<()> {
         if self.quantity.value() == self.remaining_quantity.value() {
             self.status = Status::Open
         } else if self.quantity.value() > self.remaining_quantity.value()
@@ -41,11 +41,12 @@ impl Order {
         } else {
             self.status = Status::FullyFilled
         }
+        Ok(())
     }
 
     pub fn fill(&mut self, fill_amount: Qty) -> NyquestroResult<()> {
         self.remaining_quantity = self.remaining_quantity.saturating_sub(fill_amount);
-        self.update_status();
+        self.update_status()?;
 
         Ok(())
     }

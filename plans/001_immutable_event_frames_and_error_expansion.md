@@ -33,14 +33,14 @@
 
 ### Deliverables Checklist
 
-- [ ] `src/events.rs` module with `FillEvent`, `QuoteEvent`, `OrderEvent` structs
-- [ ] All event types are `Copy`, use only existing primitives, zero-allocation
-- [ ] Extended `NyquestroError` enum with matching-related variants
-- [ ] Error classification system (`Recoverable`/`Fatal` categories)
-- [ ] `Order::new()` migrated to use `NyquestroResult<Order>`
-- [ ] `Order::fill()` signature updated to support event emission (or return `FillEvent`)
-- [ ] Unit tests for all event types (construction, field access)
-- [ ] Unit tests for error classification logic
+- [x] `src/events.rs` module with `FillEvent`, `QuoteEvent`, `OrderEvent` structs
+- [x] All event types are `Copy`, use only existing primitives, zero-allocation
+- [x] Extended `NyquestroError` enum with matching-related variants
+- [x] Error classification system (`Recoverable`/`Fatal` categories)
+- [x] `Order::new()` migrated to use `NyquestroResult<Order>`
+- [x] `Order::fill()` signature updated to support event emission (or return `FillEvent`)
+- [x] Unit tests for all event types (construction, field access)
+- [x] Unit tests for error classification logic
 - [ ] Integration test showing event emission from order operations
 
 ---
@@ -83,10 +83,10 @@
 
 ### Assumptions and Constraints to Validate
 
-- [ ] All event fields can be represented by existing primitives (`OrderID`, `Px`, `Qty`, `Ts`, `Side`)
-- [ ] Zero-allocation requirement means no `String`, `Vec`, or heap-allocated types in events
-- [ ] Event structs are small enough to be `Copy` without performance penalty
-- [ ] Error classification is sufficient for initial matching engine needs (can extend later)
+- [x] All event fields can be represented by existing primitives (`OrderID`, `Px`, `Qty`, `Ts`, `Side`)
+- [x] Zero-allocation requirement means no `String`, `Vec`, or heap-allocated types in events
+- [x] Event structs are small enough to be `Copy` without performance penalty
+- [x] Error classification is sufficient for initial matching engine needs (can extend later)
 
 ---
 
@@ -202,10 +202,10 @@
 
 **Checklist:**
 
-- [ ] `OrderRejectionReason` enum defined
-- [ ] `OrderEvent` enum with all variants
-- [ ] Constructors and validation
-- [ ] Unit tests
+- [x] `OrderRejectionReason` enum defined
+- [x] `OrderEvent` enum with all variants
+- [x] Constructors and validation
+- [x] Unit tests
 
 ### Step 5: Extend Error Enum with Matching Errors
 
@@ -215,9 +215,9 @@
 
 **Checklist:**
 
-- [ ] New error variants added to `NyquestroError`
-- [ ] Error messages are descriptive
-- [ ] Existing variants unchanged
+- [x] New error variants added to `NyquestroError`
+- [x] Error messages are descriptive
+- [x] Existing variants unchanged
 
 ### Step 6: Implement Error Classification System
 
@@ -227,10 +227,10 @@
 
 **Checklist:**
 
-- [ ] `ErrorSeverity` enum defined
-- [ ] `severity()` method implemented for all variants
-- [ ] Classification rules documented
-- [ ] Unit tests for classification
+- [x] `ErrorSeverity` enum defined
+- [x] `severity()` method implemented for all variants
+- [x] Classification rules documented
+- [x] Unit tests for classification
 
 ### Step 7: Migrate Order::new() to NyquestroResult
 
@@ -240,10 +240,10 @@
 
 **Checklist:**
 
-- [ ] `Order::new()` return type changed
-- [ ] Error mapping implemented
-- [ ] Call sites updated (`src/main.rs`, tests)
-- [ ] Tests still pass
+- [x] `Order::new()` return type changed
+- [x] Error mapping implemented
+- [x] Call sites updated (`src/main.rs`, tests)
+- [x] Tests still pass
 
 ### Step 8: Update Order::fill() to Return FillEvent
 
