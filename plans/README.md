@@ -8,9 +8,9 @@ This directory contains the authoritative project memory: implementation plans, 
 
 ## Plan Files
 
-| File                                                                                                   | Purpose                                                                                                                                                   | Status  | Last Updated |
-| ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------------ |
-| [001_immutable_event_frames_and_error_expansion.md](001_immutable_event_frames_and_error_expansion.md) | Implement zero-allocation event frames (FillEvent, QuoteEvent, OrderEvent) and extend error enum with matching-related variants and classification system | planned | 2024         |
+| File                                                                                                   | Purpose                                                                                                                                                   | Status   | Last Updated |
+| ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------ |
+| [001_immutable_event_frames_and_error_expansion.md](001_immutable_event_frames_and_error_expansion.md) | Implement zero-allocation event frames (FillEvent, QuoteEvent, OrderEvent) and extend error enum with matching-related variants and classification system | complete | 2025         |
 
 ---
 

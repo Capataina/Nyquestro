@@ -71,6 +71,36 @@ The `src/` directory contains the core library implementation. The module struct
 
 ---
 
+## Events Module (`src/events/`)
+
+- **`fill_event.rs`** – **Fill event.** Defines the `FillEvent` struct:
+
+  - `FillEvent` – records when orders match (buyer, seller, price, quantity, timestamp)
+  - `get_buyer_order_id()` – returns the buyer order ID
+  - `get_seller_order_id()` – returns the seller order ID
+  - `get_price()` – returns the price
+  - `get_quantity()` – returns the quantity
+  - `get_timestamp()` – returns the timestamp
+
+- **`quote_event.rs`** – **Quote event.** Defines the `QuoteEvent` struct:
+
+  - `QuoteEvent` – best bid/ask changes (price, quantity, side, timestamp)
+  - `get_price()` – returns the price
+  - `get_quantity()` – returns the quantity
+  - `get_side()` – returns the side
+  - `get_timestamp()` – returns the timestamp
+
+- **`order_event.rs`** – **Order event.** Defines the `OrderEvent` enum:
+
+  - `OrderEvent` – order lifecycle events (new, cancelled, rejected with reason)
+  - `get_order_id()` – returns the order ID
+  - `get_price()` – returns the price
+  - `get_quantity()` – returns the quantity
+  - `get_side()` – returns the side
+  - `get_timestamp()` – returns the timestamp
+
+---
+
 ## Tests (`tests/`)
 
 Integration tests live in the `tests/` directory, separate from unit tests (which would be in `src/` alongside the code).
