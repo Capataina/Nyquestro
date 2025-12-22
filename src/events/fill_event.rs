@@ -24,9 +24,9 @@ impl FillEvent {
             return Err(NyquestroError::InvalidQuantity);
         }
 
-        if buyer_order_id == seller_order_id {
-            return Err(NyquestroError::InvalidOrderID);
-        }
+        // if buyer_order_id == seller_order_id {
+        //    return Err(NyquestroError::InvalidOrderID);
+        //}
 
         Ok(FillEvent {
             buyer_order_id,

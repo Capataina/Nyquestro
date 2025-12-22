@@ -140,8 +140,8 @@
 - [x] `src/errors.rs` – extend enum, add classification logic
 - [x] `src/order.rs` – migrate `new()` to `NyquestroResult`, update `fill()` signature
 - [x] `src/lib.rs` – export `events` module
-- [ ] `tests/events_test.rs` – **NEW FILE** – event construction and validation tests
-- [ ] `tests/errors_test.rs` – **NEW FILE** or extend existing – error classification tests
+- [x] `tests/events_test.rs` – **NEW FILE** – event construction and validation tests
+- [x] `tests/errors_test.rs` – **NEW FILE** or extend existing – error classification tests
 
 ### Data Model Changes
 
@@ -254,10 +254,10 @@
 
 **Checklist:**
 
-- [ ] `Order::fill()` signature changed
-- [ ] `FillEvent` construction implemented
-- [ ] `src/main.rs` updated
-- [ ] Tests updated if needed
+- [x] `Order::fill()` signature changed
+- [x] `FillEvent` construction implemented
+- [x] `src/main.rs` updated
+- [x] Tests updated if needed
 
 ---
 
@@ -265,21 +265,21 @@
 
 ### Unit Tests
 
-- [ ] `FillEvent` construction with valid inputs
-- [ ] `FillEvent` rejects zero quantity
-- [ ] `FillEvent` rejects same buyer/seller ID
-- [ ] `QuoteEvent` construction with valid inputs
-- [ ] `QuoteEvent` rejects zero quantity
-- [ ] `OrderEvent::New` construction and validation
-- [ ] `OrderEvent::Cancelled` construction
-- [ ] `OrderEvent::Rejected` with all rejection reasons
-- [ ] Error classification for all `NyquestroError` variants
-- [ ] `Order::new()` error mapping to `NyquestroError`
+- [x] `FillEvent` construction with valid inputs
+- [x] `FillEvent` rejects zero quantity
+- [x] `FillEvent` rejects same buyer/seller ID
+- [x] `QuoteEvent` construction with valid inputs
+- [x] `QuoteEvent` rejects zero quantity
+- [x] `OrderEvent::New` construction and validation
+- [x] `OrderEvent::Cancelled` construction
+- [x] `OrderEvent::Rejected` with all rejection reasons
+- [x] Error classification for all `NyquestroError` variants
+- [x] `Order::new()` error mapping to `NyquestroError`
 
 ### Integration Tests
 
-- [ ] Order creation and fill produces `FillEvent`
-- [ ] Event emission from order operations works end-to-end
+- [x] Order creation and fill produces `FillEvent`
+- [x] Event emission from order operations works end-to-end
 
 ### Validation Commands
 
@@ -293,10 +293,10 @@
 
 ### Failure Modes
 
-- [ ] **Event construction with invalid data** – validation should reject (zero quantity, invalid IDs)
-- [ ] **Error classification inconsistency** – same error type should always have same severity
-- [ ] **Breaking changes in `Order::new()`** – all call sites must be updated
-- [ ] **Self-match in `FillEvent`** – currently allowed (placeholder), will be handled by matching engine later
+- [x] **Event construction with invalid data** – validation should reject (zero quantity, invalid IDs)
+- [x] **Error classification inconsistency** – same error type should always have same severity
+- [x] **Breaking changes in `Order::new()`** – all call sites must be updated
+- [x] **Self-match in `FillEvent`** – currently allowed (placeholder), will be handled by matching engine later
 
 ### Detection Signals
 
@@ -322,26 +322,26 @@
 
 ### Correctness
 
-- [ ] All unit tests pass
-- [ ] All integration tests pass
-- [ ] `cargo check` passes with no errors
-- [ ] Event structs are `Copy` and zero-allocation (verified by inspection)
-- [ ] Error classification is consistent (all variants have `severity()` implementation)
+- [x] All unit tests pass
+- [x] All integration tests pass
+- [x] `cargo check` passes with no errors
+- [x] Event structs are `Copy` and zero-allocation (verified by inspection)
+- [x] Error classification is consistent (all variants have `severity()` implementation)
 
 ### Performance
 
-- [ ] Event structs are `Copy` (no heap allocation)
-- [ ] No `String` or `Vec` in event structs (verified by inspection)
+- [x] Event structs are `Copy` (no heap allocation)
+- [x] No `String` or `Vec` in event structs (verified by inspection)
 
 ### Operability
 
-- [ ] Error messages are descriptive and actionable
-- [ ] Error classification enables decision-making (recoverable vs fatal)
+- [x] Error messages are descriptive and actionable
+- [x] Error classification enables decision-making (recoverable vs fatal)
 
 ### Documentation
 
-- [ ] Plan file updated with completion status
-- [ ] `plans/README.md` updated with plan status
+- [x] Plan file updated with completion status
+- [x] `plans/README.md` updated with plan status
 
 ---
 
