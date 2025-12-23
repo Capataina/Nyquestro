@@ -11,6 +11,7 @@ This directory contains the authoritative project memory: implementation plans, 
 | File                                                                                                   | Purpose                                                                                                                                                   | Status   | Last Updated |
 | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------ |
 | [001_immutable_event_frames_and_error_expansion.md](001_immutable_event_frames_and_error_expansion.md) | Implement zero-allocation event frames (FillEvent, QuoteEvent, OrderEvent) and extend error enum with matching-related variants and classification system | complete | 2025         |
+| [002_deterministic_matcher_loop.md](002_deterministic_matcher_loop.md)                                 | Implement deterministic matcher loop with price-time priority, single-instrument order book, and proper FillEvent/QuoteEvent emission                     | planned  | 2025         |
 
 ---
 

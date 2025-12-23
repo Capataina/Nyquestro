@@ -34,14 +34,14 @@ fn main() {
         debug_order.clone().get_status()
     );
 
-    let fill_event = debug_order.fill(Qty::new(4)).unwrap();
+    debug_order.fill(Qty::new(4)).unwrap();
     println!(
         "Fill Event: Buyer Order ID: {:?}, Seller Order ID: {:?}, Price: {:?}, Quantity: {:?}, Timestamp: {:?}.",
-        fill_event.get_buyer_order_id().value(),
-        fill_event.get_seller_order_id().value(),
-        fill_event.get_price().to_dollars(),
-        fill_event.get_quantity().value(),
-        fill_event.get_timestamp().duration_since(time_now.nanos())
+        debug_order.get_order_id().value(),
+        debug_order.get_order_id().value(),
+        debug_order.get_price().to_dollars(),
+        debug_order.get_quantity().value(),
+        debug_order.get_timestamp().duration_since(time_now.nanos())
     );
 
     println!(
@@ -55,14 +55,13 @@ fn main() {
     );
 
     debug_order.fill(Qty::new(6)).unwrap();
-    let fill_event = debug_order.fill(Qty::new(6)).unwrap();
     println!(
         "Fill Event: Buyer Order ID: {:?}, Seller Order ID: {:?}, Price: {:?}, Quantity: {:?}, Timestamp: {:?}.",
-        fill_event.get_buyer_order_id().value(),
-        fill_event.get_seller_order_id().value(),
-        fill_event.get_price().to_dollars(),
-        fill_event.get_quantity().value(),
-        fill_event.get_timestamp().duration_since(time_now.nanos())
+        debug_order.get_order_id().value(),
+        debug_order.get_order_id().value(),
+        debug_order.get_price().to_dollars(),
+        debug_order.get_quantity().value(),
+        debug_order.get_timestamp().duration_since(time_now.nanos())
     );
 
     println!(

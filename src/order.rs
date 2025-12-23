@@ -1,6 +1,5 @@
 use crate::{
     NyquestroError, NyquestroResult,
-    events::fill_event::FillEvent,
     types::{OrderID, Px, Qty, Side, Status, Ts},
 };
 
@@ -45,17 +44,11 @@ impl Order {
         Ok(())
     }
 
-    pub fn fill(&mut self, fill_amount: Qty) -> NyquestroResult<FillEvent> {
+    pub fn fill(&mut self, fill_amount: Qty) -> NyquestroResult<()> {
         self.remaining_quantity = self.remaining_quantity.saturating_sub(fill_amount);
         self.update_status()?;
 
-        Ok(FillEvent::new(
-            self.order_id,
-            self.order_id,
-            self.price,
-            fill_amount,
-            Ts::now(),
-        )?)
+        Ok(())
     }
 
     pub fn get_order_id(&self) -> OrderID {
