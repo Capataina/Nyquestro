@@ -112,7 +112,7 @@ The configuration should always reflect current project reality. Do not silently
 | `README.md` | Project intent, scope, direction, philosophy, milestones, roadmap | Directional source of truth; keep current as the project evolves; routine drift updates can be made directly with the change called out, substantial changes to mission, scope, or philosophy should be confirmed first |
 | `context/` | Repository memory, implementation-facing documentation | Main maintained view of current reality; updated continuously as the project changes |
 | Code | Implementation reality | Verify details, resolve ambiguity, detect drift |
-| `learning/` | Project teaching material | Maintained as the project evolves; not required at startup |
+| `<vault>/Learning/` | Cross-project educational archive (vault-side, at `~/Documents/life-os/Learning/`; Foundations + Domains + per-project + Pathways + Frontier.md layers) | Maintained centrally via the `upkeep-learning` skill across project invocations; per-project content lives at `<vault>/Learning/Projects/<Name>/`; not edited inline during routine work |
 
 If sources conflict: `README.md` sets intent, code determines reality, `context/` bridges the two. When `context/` says something the code disagrees with, the code wins and `context/` needs updating. When `README.md` describes a direction the code has not yet realised, both are valid — `README.md` is aspirational direction, code is current state.
 
@@ -135,9 +135,11 @@ These are not theoretical. They are the signatures of the failures that have bee
 
 ## Documentation Upkeep
 
-Keep `context/` and `learning/` current throughout the session. Make small, proportionate updates inline as the work changes the project. You have enough ambient understanding of both folder structures to handle routine maintenance without invoking the heavyweight upkeep skills, and the upkeep skills are reserved for large passes when accumulated drift is too broad for inline edits to handle reliably.
+Keep `context/` current throughout the session. Make small, proportionate updates inline as the work changes the project. You have enough ambient understanding of the `context/` folder structure to handle routine maintenance without invoking the heavyweight upkeep skill, and `upkeep-context` is reserved for large passes when accumulated drift is too broad for inline edits to handle reliably.
 
-When accumulated drift is genuinely broad — many subsystems changed, architecture shifted, documentation has fragmented, a significant session is ending — recommend a full upkeep pass through the relevant skill. Name the specific skill, give a concrete reason, and ask before running it. Skills are heavy-weight; the personality handles the everyday work and surfaces a skill run only when the work cannot be done responsibly inline.
+`<vault>/Learning/` is different — it is a cross-project educational archive maintained centrally via the `upkeep-learning` skill, not via inline edits. The skill's Phase 0 (vault-aware deduplication across projects), Phase Y (mechanical structural-integrity enforcement: ≤5 sibling files per folder, `_Overview.md` presence, frontmatter, no `Index.md`/nested `README.md`), and ephemeral-artefact lifecycle (`/tmp/upkeep-learning-<run-id>/`) all depend on running the full skill. Inline edits to vault `Learning/` during routine work would bypass cross-project deduplication (creating duplicates of universal foundations) and structural-integrity enforcement. When the project's per-project content (`<vault>/Learning/Projects/<Name>/`) needs initial creation, expansion, audit, or substantial update — or when a new domain surfaces that warrants Foundations/Domains additions — recommend `upkeep-learning` and ask before running.
+
+When accumulated drift is genuinely broad — many subsystems changed, architecture shifted, documentation has fragmented, a significant session is ending — recommend a full upkeep pass through the relevant skill. Name the specific skill, give a concrete reason, and ask before running it. Skills are heavy-weight; the personality handles the everyday `context/` work inline and surfaces a skill run only when the work cannot be done responsibly that way.
 
 ---
 
@@ -232,20 +234,23 @@ Four specialist skills support this workflow. Handle routine edits inline — in
 | Skill | What it does | Invoke when |
 |-------|-------------|-------------|
 | **upkeep-context** | Maintains `context/` — scans the repo, produces or updates `architecture.md`, `systems/*.md`, notes, plans, references | Broad drift, architectural shift, multiple subsystems changed, or misleading structure |
-| **upkeep-learning** | Maintains `learning/` — concept files, learning paths, deep-dives, glossary, exercises | Archive needs initialising, new domain area, broadly stale material, exercise expansion |
+| **upkeep-learning** | Maintains `<vault>/Learning/` — single accumulating educational archive across all projects; Foundations (universal CS, extensible) + Domains (problem-specific, adaptive) + per-project Projects + Pathways + Frontier layers; runs autonomously start-to-finish with phased execution and Phase Y structural-integrity enforcement | Project's `Learning/Projects/<Name>/` needs initialising, expansion, or substantial update; a new domain surfaces; cross-project foundations need enriching; broadly stale per-project material |
 | **project-research** | Produces durable research papers in `context/references/` with external research and project grounding | Deep technical investigation, approach comparison needing research, stale research artefact |
 | **code-health-audit** | Repository-wide analysis for dead code, performance, modularity, consistency, data layout, and risks — writes plan files to `context/plans/`, never edits source | Full health check, systematic debt identification, optimisation sweep |
 
 ### How they relate
 
 ```
-project-research  ──writes to──►  context/references/
-code-health-audit ──writes to──►  context/plans/
-upkeep-context    ──governs──────► context/  (includes references/, plans/, notes/)
+project-research  ──writes to──►  <repo>/context/references/
+code-health-audit ──writes to──►  <repo>/context/plans/
+upkeep-context    ──governs──────► <repo>/context/  (includes references/, plans/, notes/)
                                    read by all other skills before generating output
+upkeep-learning   ──writes to──►  <vault>/Learning/  (cross-project archive in LifeOS vault)
+                                   reads <repo>/README.md, <repo>/context/, and existing
+                                   <vault>/Learning/ via vault-aware Phase 0
 ```
 
-`upkeep-context` is the foundation — it maintains the project model all other skills read, and it governs plan lifecycle (ticking checkboxes, pruning completed plans). `upkeep-learning` may cross-link to research papers in `context/references/` when teaching material needs the deeper background.
+`upkeep-context` is the per-project foundation — it maintains the project model the other per-project skills read, and it governs plan lifecycle (ticking checkboxes, pruning completed plans). `upkeep-learning` operates orthogonally: it maintains the cross-project Learning archive in the LifeOS vault, separate from per-repo `context/`. Both stay in sync with project reality but operate on different artefacts at different cadences — `context/` evolves continuously inline; vault `Learning/` is updated through full skill runs that span Foundations / Domains / Projects layers.
 
 When recommending a skill run, name the skill, give a concrete reason, and wait for confirmation. Skills are heavy-weight operations — they consume significant context and should only be invoked when their scope is genuinely warranted.
 
@@ -303,7 +308,7 @@ This is a structural gate, not an aspiration. Read it off the live checklist fro
 - cite file paths, modules, and symbols when discussing implementation,
 - compare implementation against intent, interfaces, and documentation,
 - flag correctness issues, interface drift, maintainability risks, and missing verification,
-- update `context/` and `learning/` as part of completing the work when the change materially affects them.
+- update `context/` as part of completing the work when the change materially affects it; if the change materially affects the project's vault `Learning/Projects/<Name>/` content, recommend an `upkeep-learning` run rather than editing the vault inline.
 
 ---
 
@@ -330,7 +335,7 @@ For each task:
 3. Execute proportionately — implement, refactor, debug, or review as the task requires.
 4. **Obligation audit before declaring the task done.** Enumerate every obligation from the active skill (or, outside a skill, the obligations implied by the user's request). For each, cite concrete evidence (tool call, file path, search query, test name) or declare it skipped with reason. If any is skipped, surface it to the user before handing back. Read this off the Live Obligation Tracking checklist, not from memory.
 5. Capture any notes that surfaced during the work.
-6. Update `context/` and `learning/` where the completed change created real drift.
+6. Update `context/` where the completed change created real drift. Vault `Learning/` is maintained via the `upkeep-learning` skill — recommend a run if the change materially affects the project's per-project Learning content rather than editing the vault inline.
 7. Tick checkboxes in active plan files as items complete; remove plans whose criteria are fully met.
 8. Commit at logical checkpoints with a comprehensive message.
 9. If drift now appears broader than local upkeep can responsibly cover, recommend a fuller upkeep pass and ask.
