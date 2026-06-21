@@ -74,10 +74,10 @@ At the start of every session:
 0. Fetch the latest remote state.
    Run `git fetch origin` before anything else. This ensures you are aware of upstream changes and prevents merge conflicts when committing or pushing later in the session.
 
-1. Read `context/architecture.md` if it exists.
+1. Read the architecture doc if it exists. The canonical form is `context/architecture.html` — an interactive explorer bundled from `context/arch/data.js`; read `arch/data.js` for the underlying content (nodes, edges, relationships, data-flow), since the bundled HTML is for human browsing. Fall back to `context/architecture.md` on projects still using the legacy markdown form.
    Purpose: structural orientation — what the repository is, its shape, major subsystems, and dependency direction.
    If `context/` does not exist: read `README.md` directly, summarise what you can determine about the project state, and recommend running a context upkeep pass to establish the memory layer before beginning serious work.
-   If `context/` exists but `architecture.md` is missing: read what context files are present, then note that a full upkeep pass would strengthen the foundation.
+   If `context/` exists but the architecture doc is missing: read what context files are present, then note that a full upkeep pass would strengthen the foundation.
 
 2. Read `context/notes.md` if it exists.
    Purpose: project preferences, design rationale, guiding principles, and lessons from prior sessions. This gives you the *why* behind the current state — decisions that were made, things that were tried and abandoned, and constraints that should guide future work.
@@ -85,7 +85,7 @@ At the start of every session:
 
 3. Read additional `context/` files relevant to the session's likely focus.
    Purpose: understand current implementation reality for the area you are about to work in.
-   Read `architecture.md` and `notes.md` first, then pull specific system, plan, or reference files on demand as the task requires. Do not preload all of `context/` — that wastes attention on files you may not need.
+   Read the architecture doc (`architecture.html`, or `arch/data.js` for the raw content) and `notes.md` first, then pull specific system, plan, or reference files on demand as the task requires. Do not preload all of `context/` — that wastes attention on files you may not need.
 
 4. Read the root `README.md`.
    Purpose: project intent, scope, philosophy, milestones, and roadmap. The README is the directional document — it should tell a reader what the project does, why it exists, how it is built, what decisions were made, and where it is going. As the project evolves, the README evolves with it.
@@ -233,7 +233,7 @@ Four specialist skills support this workflow. Handle routine edits inline — in
 
 | Skill | What it does | Invoke when |
 |-------|-------------|-------------|
-| **upkeep-context** | Maintains `context/` — scans the repo, produces or updates `architecture.md`, `systems/*.md`, notes, plans, references | Broad drift, architectural shift, multiple subsystems changed, or misleading structure |
+| **upkeep-context** | Maintains `context/` — scans the repo, produces or updates `architecture.html` (via `arch/data.js`), `systems/*.md`, notes, plans, references | Broad drift, architectural shift, multiple subsystems changed, or misleading structure |
 | **upkeep-learning** | Maintains `<vault>/Learning/` — single accumulating educational archive across all projects; Foundations (universal CS, extensible) + Domains (problem-specific, adaptive) + per-project Projects + Pathways + Frontier layers; runs autonomously start-to-finish with phased execution and Phase Y structural-integrity enforcement | Project's `Learning/Projects/<Name>/` needs initialising, expansion, or substantial update; a new domain surfaces; cross-project foundations need enriching; broadly stale per-project material |
 | **project-research** | Produces durable research papers in `context/references/` with external research and project grounding | Deep technical investigation, approach comparison needing research, stale research artefact |
 | **code-health-audit** | Repository-wide analysis for dead code, performance, modularity, consistency, data layout, and risks — writes plan files to `context/plans/`, never edits source | Full health check, systematic debt identification, optimisation sweep |
