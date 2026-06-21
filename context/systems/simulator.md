@@ -40,7 +40,8 @@ Defaults follow the design brief in `notes/dashboard-design.md`: ~60 events/s ag
 ### Step semantics
 
 `MarketSimulator::step(dt: f64) -> Vec<SimAction>` does, in order:
-1. **OU drift** on `mid_real`: `dX = θ(μ − X) dt + σ √dt · N(0,1)` — Box–Muller standard normal.
+0. **Clamp `dt`** to `min(1/θ, 0.25)` (non-finite / negative → 0). The OU update is explicit Euler, stable only while `θ·dt < 2`; the cap keeps `θ·dt ≤ 1` for any positive θ and also bounds the per-step Poisson burst. Only engages on a frame hitch (`dt` is wall-clock-elapsed × speed, both uncapped upstream); the small fixed `dt` of tests/replay is far below the cap, so determinism is untouched. See the durable note below.
+1. **OU drift** on `mid_real`: `dX = θ(μ − X) dt + σ √dt · N(0,1)` — Box–Muller standard normal. The result is then guarded: a non-finite `mid_real` resets to fair value and any finite runaway is clamped to `[1, 100·μ]`, so the mid is always a sane finite price.
 2. **Advance the simulator clock** by `dt × 1e9` ns (used as the timestamp for every order generated this step).
 3. **Per side**, sample three Poisson counts with `λ × dt`:
    - limit-order arrivals → `gen_limit(side)` → `SimAction::Submit(order)`,
@@ -96,12 +97,12 @@ App::step(dt)
 ## Implemented Outputs / Artifacts
 
 - The two module files (`simulator/mod.rs`, `simulator/market.rs`).
-- 3 inline unit tests: deterministic-under-fixed-seed, step-emits-orders-within-expected-band, mid-price-stays-in-reasonable-neighbourhood.
+- 4 inline unit tests: deterministic-under-fixed-seed, step-emits-orders-within-expected-band, mid-price-stays-in-reasonable-neighbourhood, pathological-dt-never-diverges-the-mid (regression for the sparkline-overflow crash).
 - Headless `main --no-tui` produces ~750 orders / ~550 fills per 10 simulated seconds with the default config.
 
 ## Known Issues / Active Risks
 
-- **Knuth's small-λ Poisson sampler is exact only for modest λ.** With the default `limit_lambda = 30 events/s`, a 50ms tick has λ = 1.5, well within the safe range. If a future user cranks `dt × λ` past ~30 the sampler degrades; we cap iterations at 1000 to avoid runaway loops, but the distribution would be wrong. Worth replacing with a transformed-rejection sampler if `λ × dt > 30` becomes a real config.
+- **Knuth's small-λ Poisson sampler is exact only for modest λ.** With the default `limit_lambda = 30 events/s`, a 50ms tick has λ = 1.5, well within the safe range. The step-`dt` cap (≤ 0.25s) now bounds the worst case at `λ × dt ≤ 7.5` for the default config, so the sampler stays in its accurate range even on a hitch; a future config with much larger λ would still want a transformed-rejection sampler if `λ × dt > 30` became reachable.
 - **`gen_market` prices "5 ticks through the touch"** — a hardcoded constant. For most synthetic setups this works, but a config field would be cleaner.
 - **Box–Muller wastes one sample.** Each call to `standard_normal` consumes two uniform samples and uses the cosine pair only. Negligible cost; documented for completeness.
 - **Cancellations target the wrong order distribution.** `CancelHint` is a signal; `App::handle_cancel_hint` cancels by `(self.total_cancels as usize) % resting_ids.len()` which is round-robin. Real markets cancel proportionally to queue size at a level (Cont's "proportional to liquidity"). The current behaviour skews uniform; visually fine for a demo, distributionally wrong for a research-grade simulator.
@@ -124,7 +125,8 @@ None — the simulator is feature-complete to the design brief.
 ## Durable Notes / Discarded Approaches
 
 - **One RNG, one seed, deterministic.** Considered per-channel RNGs (one for arrivals, one for sizes, one for prices) but rejected — the cross-channel determinism property is easier to reason about with a single source. The cost is that swapping the order of two `gen` calls inside `step` would change the entire output stream; that's accepted as a small price for clean reproducibility.
-- **OU on the *real-valued* mid, not the integer cents.** Cents are derived by `mid_cents() = mid_real.round().max(1.0) as u64`. Integer-only OU would require truncation/rejection of small drift steps.
+- **OU on the *real-valued* mid, not the integer cents.** Cents are derived by `mid_cents()`, which floors at 1 and now also returns fair value rather than a saturated u64::MAX if `mid_real` is ever non-finite. Integer-only OU would require truncation/rejection of small drift steps.
+- **The OU integrator's `dt` must be capped (numerical-stability lesson).** Explicit Euler on `mid' = mid·(1 − θ·dt) + θ·μ·dt + shock` is only stable while `θ·dt < 2`; past that `mid_real` diverges geometrically. Because the dashboard feeds `dt = wall-clock-elapsed × speed` (a frame hitch at speed 50 easily clears the bound), an uncapped step used to diverge the mid to ±inf, which saturated to a near-`u64::MAX` mid and overflowed the dashboard sparkline's `value × height × 8` — crashing the app. The fix caps `dt`, bounds `mid_real`, hardens `mid_cents`, and clamps the sparkline input (defence in depth). Anyone changing the speed clamp (`[0.1, 50]`), θ, or adding a large-`dt` driver must keep `θ·dt` well under 2. A higher-order or implicit integrator would lift the cap but was not worth the complexity for a demo mid-walk.
 - **Knuth's algorithm chosen over `Distribution::Poisson` from `rand_distr`.** Avoids pulling another transitive dep. Performance is fine for our λ values.
 - **The full simulator is in one module.** Considered splitting into `simulator/{config, rng, distributions, market}.rs` but the entire file is ~250 LOC and splits would just add navigation overhead.
 
