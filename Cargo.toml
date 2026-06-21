@@ -1,6 +1,6 @@
 [package]
 name = "nyquestro"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 description = "From-scratch order matching engine in safe Rust, with a real-time observability TUI."
 license = "MIT"

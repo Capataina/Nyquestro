@@ -103,18 +103,60 @@ impl MarketSimulator {
     }
 
     pub fn mid_cents(&self) -> u64 {
+        // Self-defending public accessor: a non-finite mid (should be
+        // impossible after the guards in `step`, but this is a public surface)
+        // maps to fair value rather than saturating to u64::MAX through the
+        // `as` cast.
+        if !self.mid_real.is_finite() {
+            return self.cfg.fair_value_cents.max(1);
+        }
         self.mid_real.round().max(1.0) as u64
     }
 
     /// Advance simulation by `dt` seconds and emit any actions that
     /// occurred. Aggregates by side. The caller submits/cancels each one.
     pub fn step(&mut self, dt: f64) -> Vec<SimAction> {
+        // Largest single integration step we will take. The OU update below is
+        // explicit Euler, which is only stable while `θ·dt < 2`: past that the
+        // homogeneous coefficient `(1 − θ·dt)` has magnitude > 1 and `mid_real`
+        // diverges geometrically within a few steps. `dt` arrives as
+        // wall-clock-elapsed × speed (both uncapped — a frame hitch at high
+        // speed can hand us several seconds), so without a cap a single stall
+        // would detonate the mid into ±inf, which then casts to a near-u64::MAX
+        // mid and overflows the dashboard sparkline. We derive the cap from θ so
+        // `θ·dt ≤ 1` for any positive θ (comfortable margin below the 2.0
+        // divergence bound), and also clamp at MAX_STEP_DT to bound the per-step
+        // Poisson order burst. Non-finite / negative dt collapse to zero. The
+        // fixed small dt used in tests and deterministic replay is far below the
+        // cap, so this only ever engages on a hitch and leaves determinism
+        // untouched.
+        const MAX_STEP_DT: f64 = 0.25;
+        let stable_dt = if self.cfg.theta > 0.0 {
+            1.0 / self.cfg.theta
+        } else {
+            f64::INFINITY
+        };
+        let max_dt = stable_dt.min(MAX_STEP_DT);
+        let dt = if dt.is_finite() { dt.clamp(0.0, max_dt) } else { 0.0 };
+
         // 1. Drift the OU mid by dt.
         // dX = θ(μ − X)dt + σ √dt · N(0, 1)
         let mu = self.cfg.fair_value_cents as f64;
         let drift = self.cfg.theta * (mu - self.mid_real) * dt;
         let shock = self.cfg.sigma_cents * dt.sqrt() * standard_normal(&mut self.rng);
         self.mid_real += drift + shock;
+        // Belt-and-braces: the mid is a price and must remain a sane, finite,
+        // positive value regardless of what the integrator produced. A
+        // non-finite result resets to fair value; the upper clamp bounds any
+        // finite runaway so `mid_cents()` can never emit a giant u64 downstream.
+        // With the dt cap above this never engages in normal operation (the mid
+        // sits within a few hundred cents of fair value), so it changes no
+        // existing behaviour.
+        const MID_RUNAWAY_FACTOR: f64 = 100.0;
+        if !self.mid_real.is_finite() {
+            self.mid_real = mu;
+        }
+        self.mid_real = self.mid_real.clamp(1.0, mu * MID_RUNAWAY_FACTOR);
         self.sim_clock_ns += (dt * 1_000_000_000.0) as u64;
 
         let mut actions = Vec::new();
@@ -298,5 +340,30 @@ mod tests {
         // OU around 10000 with θ=0.5, σ=2 ⇒ stationary stddev ≈ σ/√(2θ) ≈ 2.
         // Well within ±200 cents.
         assert!(mid > 9_500 && mid < 10_500, "mid drifted to {mid}");
+    }
+
+    #[test]
+    fn pathological_dt_never_diverges_the_mid() {
+        // Regression for the dashboard crash: a frame hitch at elevated speed
+        // used to hand a huge `dt` into the explicit-Euler OU update, diverging
+        // `mid_real` to a giant/inf value that cast to a near-u64::MAX mid and
+        // overflowed ratatui's sparkline (`value * height * 8`). The step-dt cap
+        // plus the mid guards must keep the mid finite and near fair value for
+        // ANY dt — large, infinite, NaN, or negative.
+        let mut sim = MarketSimulator::new(SimConfig::default(), 7);
+        for dt in [5.0, 50.0, 1_000.0, f64::INFINITY, f64::NAN, -3.0] {
+            for _ in 0..20 {
+                let _ = sim.step(dt);
+                let mid = sim.mid_cents();
+                assert!(mid >= 1, "mid underflowed to {mid} at dt={dt}");
+                // Fair value is 10_000; a divergence would shoot to millions or
+                // u64::MAX. 100_000 (10× fair) is generous enough never to flake
+                // yet tight enough to catch any real runaway.
+                assert!(
+                    mid < 100_000,
+                    "mid diverged to {mid} at dt={dt} (would overflow the sparkline)"
+                );
+            }
+        }
     }
 }

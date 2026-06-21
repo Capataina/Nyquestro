@@ -433,9 +433,17 @@ fn render_latency(frame: &mut Frame, area: Rect, app: &App) {
             .into_iter()
             .rev()
             .collect();
+        // Clamp each delta before it reaches ratatui's `Sparkline`: the widget
+        // computes `value * height * 8` in u64 internally (sparkline.rs:388),
+        // which panics on multiply-overflow for very large values. A mid Δ of
+        // more than a few thousand cents is meaningless for this chart anyway,
+        // so cap it — the renderer must never be able to crash the app on a bad
+        // upstream value. This is defence-in-depth behind the simulator's own
+        // mid guards; with those in place the cap should never actually bind.
+        const SPARK_DELTA_CAP: u64 = 1_000_000;
         let deltas: Vec<u64> = recent
             .windows(2)
-            .map(|w| (w[1] as i64 - w[0] as i64).unsigned_abs())
+            .map(|w| (w[1] as i64 - w[0] as i64).unsigned_abs().min(SPARK_DELTA_CAP))
             .collect();
         if !deltas.is_empty() {
             lines.push(Line::from(""));
