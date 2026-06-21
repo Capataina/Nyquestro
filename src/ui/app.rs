@@ -760,6 +760,7 @@ fn map_key(key: KeyEvent) -> Action {
 }
 
 pub fn run(seed: u64) -> Result<(), Box<dyn std::error::Error>> {
+    install_panic_hook();
     let telemetry = match crate::telemetry::spawn_writer() {
         Ok((handle, path)) => {
             eprintln!("telemetry → {}", path.display());
@@ -781,6 +782,7 @@ pub fn run(seed: u64) -> Result<(), Box<dyn std::error::Error>> {
 /// The caller is also responsible for spawning the telemetry writer and
 /// embedding the handle in the `App`.
 pub fn run_with_app(app: App) -> Result<(), Box<dyn std::error::Error>> {
+    install_panic_hook();
     let mut terminal = setup_terminal()?;
     let result = run_loop(&mut terminal, app);
     restore_terminal(&mut terminal)?;
@@ -901,4 +903,27 @@ fn restore_terminal(
     execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
     Ok(())
+}
+
+/// Best-effort terminal restore that needs no `Terminal` handle, so it is
+/// safe to call from a panic hook. Returns the terminal to cooked mode,
+/// leaves the alternate screen, and shows the cursor. Errors are
+/// deliberately swallowed: mid-panic there is nothing useful to do with
+/// them, and the hook must never itself panic.
+fn restore_terminal_raw() {
+    let _ = disable_raw_mode();
+    let _ = execute!(stdout(), LeaveAlternateScreen, crossterm::cursor::Show);
+}
+
+/// Install a panic hook that restores the terminal before the default hook
+/// prints the panic. Without it, a panic inside the render loop leaves the
+/// user on a raw-mode alternate screen where the backtrace is unreadable
+/// and the shell is left broken. Chains to the previous hook so the panic
+/// message and backtrace still print exactly as before.
+fn install_panic_hook() {
+    let prev = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |info| {
+        restore_terminal_raw();
+        prev(info);
+    }));
 }
