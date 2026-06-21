@@ -136,10 +136,10 @@ pub enum EngineState { Running, Paused }
 ## Known Issues / Active Risks
 
 - **No automated UI tests.** Visual correctness is verified manually. The Ratatui ecosystem has a `TestBackend` we could hook in for snapshot-style assertions; not yet wired.
-- **Panic during render does not restore the terminal.** `setup_terminal` calls `enable_raw_mode + EnterAlternateScreen`; `restore_terminal` reverses them. If the run loop panics, raw mode persists. A `std::panic::set_hook` that calls `restore_terminal` would close this gap.
+- **Panic during render now restores the terminal** (fixed in `7525618`). `install_panic_hook`, armed at the top of `run` / `run_with_app`, sets a hook that calls `restore_terminal_raw` (disable raw mode, leave the alternate screen, show the cursor) and then chains to the previous hook so the backtrace still prints — on a clean, cooked screen. Caveat: this restore-on-panic path is reasoned-correct but **not unit-tested** (verifying it needs a pseudo-terminal subprocess harness), so it stays an active-risk entry rather than a closed one.
 - **Resting-id cache is stale by up to 250ms.** A cancel hint may target a recently-filled id and fail; this is silently swallowed (cancel returns Err, we don't increment cancels). For the dashboard's purposes, fine; for a deterministic test of cancel rate, not.
 - **`render_latency`'s sparkline may render past the pane's bottom border** if the latency pane is shorter than 8 rows. We compute `used` as `lines.len() as u16` but don't clamp against `inner.height`. Acceptable in practice because the latency pane gets ≥ 60% of the top row's height, which on most terminals exceeds 8 rows; pathological tiny terminals could clip.
-- **The dashboard runs on the same thread as the engine.** A long simulator step (e.g. someone cranks `speed` to 50× and the sim emits hundreds of actions) will stall the render path until it returns. The 50ms sim cadence makes this rare but not impossible.
+- **The dashboard runs on the same thread as the engine.** A long simulator step stalls the render path until it returns. The per-step `dt` cap added in `ceed2e9` (`min(1/theta, 0.25)`) now bounds the Poisson order burst per step (`lambda·dt ≤ ~7.5` for the default config), so cranking `speed` to 50× no longer detonates the burst; the 50ms sim cadence plus the cap makes a stall rare but not impossible.
 
 ### Downstream impact
 
@@ -151,8 +151,7 @@ None.
 
 ## Planned / Missing / Likely Changes
 
-- **`std::panic::set_hook` to restore terminal on panic.** Small fix, big resilience win.
-- **`TestBackend` snapshot tests** for the render functions, even if just per-pane renders against fixed `App` state.
+- **`TestBackend` snapshot tests** for the render functions, even if just per-pane renders against fixed `App` state. This is also what would let the restore-on-panic path (now implemented) finally be tested under a pseudo-terminal.
 - **Configurable layout** so the user can hide panes that don't fit on narrow terminals. Currently the percentage-split fights small terminals.
 - **Latency-pane visual upgrade** — replace the percentile-list-plus-sparkline with a Bookmap-style heatmap if the design iteration calls for it.
 - **History tape paging** — `j`/`k` to scroll the tape ring back through history beyond the visible cap.

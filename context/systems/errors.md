@@ -8,7 +8,7 @@
 
 ## Boundaries / Ownership
 
-- **Owns:** `NyquestroError` (14 variants today), `ErrorSeverity` (`Recoverable` / `Fatal`), `severity(&self)` method, `is_recoverable`/`is_fatal` shortcuts, the `NyquestroResult<T>` alias.
+- **Owns:** `NyquestroError` (16 variants today), `ErrorSeverity` (`Recoverable` / `Fatal`), `severity(&self)` method, `is_recoverable`/`is_fatal` shortcuts, the `NyquestroResult<T>` alias.
 - **Does not own:** error *handling* (callers decide whether to log, retry, increment a counter, etc.). The `ui::app` module currently maps errors to `metrics.record_rejects(1)`; that policy lives in the UI layer, not here.
 - **Imported by:** every fallible constructor and every method that returns `NyquestroResult<T>` — i.e. essentially every non-accessor function in the crate.
 
@@ -18,9 +18,9 @@ The variants partition cleanly into three groups:
 
 | Group | Variants | Severity |
 |-------|----------|----------|
-| Primitive validation | `InvalidOrderId`, `InvalidPrice { cents }`, `InvalidPriceFloat { value }`, `InvalidQuantity`, `QuantityOverflow` | Recoverable |
+| Primitive validation | `InvalidOrderId`, `InvalidSymbol`, `InvalidPrice { cents }`, `InvalidPriceFloat { value }`, `InvalidQuantity`, `QuantityOverflow` | Recoverable |
 | Order lifecycle | `OverFill { order_id, fill, remaining }`, `InvalidStatusTransition { order_id, from, to }`, `OrderTerminal(u64)` | Recoverable |
-| Matching engine | `SelfMatch(u64)`, `OrderNotFound(u64)`, `OrderAlreadyExists(u64)`, `PriceLevelMissing { price_cents }`, `PriceLevelMismatch { expected_cents, actual_cents }` | Recoverable |
+| Matching engine | `SelfMatch(u64)`, `SymbolMismatch`, `OrderNotFound(u64)`, `OrderAlreadyExists(u64)`, `PriceLevelMissing { price_cents }`, `PriceLevelMismatch { expected_cents, actual_cents }` | Recoverable |
 | Internal invariant | `InvariantViolation(&'static str)` | Fatal |
 
 `thiserror::Error` provides `Display` and `Error::source` automatically. Every variant's `#[error("…")]` produces a single-line human-readable message that includes the salient fields.
@@ -51,7 +51,7 @@ constructor / mutator
 
 ## Implemented Outputs / Artifacts
 
-- `NyquestroError` (14 variants), all `Clone + Debug + PartialEq` — fields chosen to be `Copy` where possible so error matching is cheap.
+- `NyquestroError` (16 variants), all `Clone + Debug + PartialEq` — fields chosen to be `Copy` where possible so error matching is cheap.
 - `severity` classifier with single-source-of-truth design.
 - 3 inline unit tests covering: every recoverable variant classifies as recoverable, `InvariantViolation` is fatal, error formatting renders the field values.
 
