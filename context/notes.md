@@ -20,13 +20,12 @@ These are the concrete next-step plans tracked in `plans/`. **Recommended priori
 - [extended-order-types](plans/extended-order-types.md) — IOC, FOK, AON, iceberg, peg, market
 - [risk-layer](plans/risk-layer.md) — fat-finger, position limits, throttle, rolling-VaR circuit breaker; pre-trade guard between submission and the engine
 - [recovery-and-event-log](plans/recovery-and-event-log.md) — append-only event log + snapshot-and-delta book recovery
-- ~~[live-crypto-feed](plans/live-crypto-feed.md)~~ — **DONE 2026-05-04.** Coinbase Advanced Trade `level2` WebSocket bridge shipped; see `systems/feed.md`.
-- ~~[telemetry-and-profiling](plans/telemetry-and-profiling.md)~~ — **DONE 2026-05-04.** JSONL flight recorder at `~/Library/Application Support/Nyquestro/last-run.jsonl`; see `systems/telemetry.md` and `notes/telemetry-policy.md`. PaneRender per-pane timing remains for next iteration.
-- ~~[dashboard-infographics](plans/dashboard-infographics.md)~~ — **DONE 2026-05-04.** Engine pane gauges, throughput sparklines, trade-tape size bars, latency distribution bars, DOB pressure bar, health-dot system; see `systems/ui.md`.
+
+Three earlier plans (`live-crypto-feed`, `telemetry-and-profiling`, `dashboard-infographics`) shipped 2026-05-04 and were removed 2026-06-21 per plan hygiene — their durable content lives in `systems/feed.md`, `systems/telemetry.md`, and `systems/ui.md` respectively.
 
 ## Active work areas
 
-- `ui/` is the project's headline visual and is the target for near-term iteration (multi-instrument support landed; further polish, panic-handler, snapshot tests).
+- `ui/` is the project's headline visual (multi-instrument support landed; panic-during-render restore shipped in `7525618` but is untested — needs a pseudo-terminal harness, see `systems/ui.md`); `TestBackend` snapshot tests are the next concrete iteration.
 - `book/` carries the matching engine + the new `Market` multi-instrument wrapper. Feature-complete to MVP.
 - `metrics/` records per-op latency (Submit/Match/Cancel) with p50/p95/p99/p999/p9999/max, plus 1s/10s/1min/5min windowed counters for orders/fills/cancels/rejects/quotes.
 - `feed/` is brand-new — Coinbase Advanced Trade `level2` WebSocket client + L2-to-virtual-order bridge. `cargo run -- --live coinbase` shows live BTC-USD/ETH-USD/SOL-USD depth. Sequence-gap detection is the obvious next iteration.
