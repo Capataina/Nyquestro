@@ -1,0 +1,45 @@
+# window	hash	date	THEME	subject
+# Replace each 'TODO' in the THEME column with a theme key from lineage.themes[].key (in data.js). The script tallies lineage.buckets[].counts from this column on the next orchestrate run; do not hand-edit the counts.
+0	f2097bc	2025-06-30	bootstrap	project init
+0	69dbe2b	2025-06-30	bootstrap	Initial commit
+0	d336de3	2025-06-30	bootstrap	Merge remote-tracking branch 'origin/main'
+0	79c79ed	2025-06-30	bootstrap	Update README.md
+0	281c2f7	2025-07-01	bootstrap	testing ssh key
+0	49c72a5	2025-07-01	bootstrap	test
+0	fb08342	2025-07-02	engine	added primitive structs
+0	6055355	2025-07-02	engine	added time struct
+0	7ceb1e5	2025-07-03	engine	added order struct and basic order functions
+0	624aaa1	2025-07-05	engine	wrote unit tests for types
+0	564d3c9	2025-07-10	bootstrap	Update README.md
+0	c92cd07	2025-07-23	engine	added errors and price level struct
+5	94d2a3f	2025-12-21	tooling	setting up project plans
+5	2316f6c	2025-12-21	tooling	more project plans/readme file in plans folder
+5	43178dc	2025-12-21	engine	Add event modules and expand error handling
+5	6ada0b3	2025-12-21	engine	Add error severity and expand OrderEvent functionality
+5	3556a70	2025-12-22	engine	added events like fill, order and quote
+5	967e016	2025-12-22	tooling	changed plans and documentation to reflect recent changes
+5	864b488	2025-12-23	tooling	prep for next feature
+7	7c6687c	2026-02-16	tooling	Add context docs, remove plans, update .gitignore
+7	7e47348	2026-02-22	tooling	Add core hardening and OrderBook MVP plan
+9	db2264d	2026-03-25	tooling	Revise README to enhance project overview and details
+10	75db2cc	2026-05-05	tooling	Add project-local CLAUDE.md (principal-engineer collaborator personality)
+10	873b25f	2026-05-05	tooling	gitignore: stop ignoring CLAUDE.md, gemini.md, AGENTS.md
+10	0b8a248	2026-05-05	engine	Phase A+B+multi-instrument: hardened core + matching engine MVP
+10	deee10b	2026-05-05	observability	feat(metrics): HDR histograms + counters + windowed rolling counters
+10	bfec83b	2026-05-05	feed	feat(simulator): Ornstein-Uhlenbeck synthetic market data
+10	24024a0	2026-05-05	observability	feat(telemetry): JSONL flight recorder with bounded sync_channel
+10	3132283	2026-05-05	feed	feat(feed): Coinbase Advanced Trade L2 WebSocket bridge
+10	5c705f3	2026-05-05	dashboard	feat(ui): Ratatui dashboard with infographics theme
+10	bc62b47	2026-05-05	observability	test(examples): live_smoke + telemetry_smoke integration verifiers
+10	6516eb6	2026-05-05	tooling	docs(context): regenerate after Phase A+B+C+D ship
+10	f8220d3	2026-05-05	tooling	learning(phase-0): discovery + phase plan — 2 files, INV-F/C/DP/A/AR/S/D/CMP/E/X/M/I/G/P enumerated
+10	e0cffe1	2026-05-05	tooling	revert: remove learning/ — upkeep-learning skill being reworked
+10	cc1deb0	2026-05-05	tooling	docs(claude): repoint learning references to vault-side <vault>/Learning/
+11	8a80c63	2026-06-21	observability	plans: Add benchmark-harness — headless `--benchmark` surfacing the existing HDR metrics
+11	47491bd	2026-06-21	tooling	plans: Fold session's small/medium/large hiring-signal suggestions into plan files
+11	ceed2e9	2026-06-21	feed	fix(simulator): cap OU step dt so an unstable mid can't overflow the dashboard sparkline
+11	e0958af	2026-06-21	feed	docs(context): sync simulator.md with the OU dt-cap fix (ceed2e9)
+11	7525618	2026-06-21	dashboard	fix(ui): restore the terminal on panic so a render-loop crash isn't unreadable
+11	92ffdfe	2026-06-21	tooling	context: migrate architecture to the HTML explorer pipeline
+11	564766d	2026-06-21	tooling	context: reconcile systems/plans/staleness with current reality
+11	9c63bc3	2026-06-21	tooling	docs(claude): repoint startup reads at architecture.html (architecture.md removed)
