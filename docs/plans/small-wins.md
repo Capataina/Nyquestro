@@ -30,8 +30,8 @@ Items in this bundle (the latency-numbers-in-README item folded into [`benchmark
 
 - **What:** Bring the directional docs back in line with what the code actually does. Three concrete drifts found on 2026-06-21:
   - The README's **⚡ Matching Engine** roadmap section is entirely unticked, yet resting-order support, aggressive sweep, partial-fill tracking, atomic cancellation, and self-match prevention all shipped on 2026-05-05 and are pinned by `tests/matching_test.rs`. The README currently *under-sells* the project. Tick the items that are actually done; leave the genuinely-future ones (lock-free pool, SPMC ring buffer, UDP gateway, risk guard, strategy agent) unticked.
-  - `context/ARCHITECTURE.md`'s repo-structure tree and dependency diagram **omit `src/feed/` and `src/telemetry/`**, although both modules are described correctly in the subsystem table and prose lower down. Add them to the tree and the dependency picture.
-  - `context/ARCHITECTURE.md` says "**88 tests** at last run"; the suite is now at **101** (verified `cargo test`, 2026-06-21). Update the count.
+  - `README.md`'s repo-structure and architecture material should continue to include `src/feed/` and `src/telemetry/`; scoped operational details belong in their `AGENTS.md` files.
+  - Do not hard-code test counts in durable documentation; use the current `cargo test` output as evidence.
 - **Why for hiring:** A README that under-claims is almost as bad as one that over-claims — a sharp reader notices the gap between the unticked roadmap and the obviously-working engine and wonders which to trust. Accurate docs are free credibility.
 - **Steps:**
   - [ ] Tick the done items in the README **Matching Engine** (and any other) roadmap sections; leave future items unticked.

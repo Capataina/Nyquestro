@@ -4,6 +4,12 @@
 
 ---
 
+## Current implementation
+
+The shipped code is a deterministic, single-process safe-Rust matching engine with strongly typed order primitives, price-time-priority books, a multi-instrument `Market`, synthetic simulation, HDR latency metrics, local telemetry, and a Ratatui dashboard. A Coinbase Advanced Trade level-2 adapter bridges live BTC-USD, ETH-USD, and SOL-USD depth into internal virtual orders. The lock-free pool, gateway, risk layer, wire protocol, and strategy agent described later remain roadmap work rather than current architecture.
+
+Operational invariants are owned by the recursive `AGENTS.md` files under `src/`; durable rationale, research, design notes, and active proposals live under `docs/`. Use the current `cargo test` output rather than a hard-coded test count.
+
 ## Why Nyquestro exists
 
 Every trade that happens on any exchange, whether equity, crypto, futures, or FX, passes through a matching engine. It is the most latency-sensitive piece of software in finance. A matching engine that processes an order in 10 microseconds instead of 12 is worth millions in annual revenue to a firm operating at scale. The firms that win at this game, Jane Street, HRT, Citadel Securities, Jump, have spent decades optimising every layer of this pipeline: the data structures, the memory layout, the wire protocol, the risk controls, the hardware.

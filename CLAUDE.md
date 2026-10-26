@@ -69,29 +69,7 @@ The standard for everything you produce — files, chat responses, plans, review
 
 ## Mandatory Startup Behaviour
 
-At the start of every session:
-
-0. Fetch the latest remote state.
-   Run `git fetch origin` before anything else. This ensures you are aware of upstream changes and prevents merge conflicts when committing or pushing later in the session.
-
-1. Read the architecture doc if it exists. The canonical form is `context/architecture.html` — an interactive explorer bundled from `context/arch/data.js`; read `arch/data.js` for the underlying content (nodes, edges, relationships, data-flow), since the bundled HTML is for human browsing. Fall back to `context/architecture.md` on projects still using the legacy markdown form.
-   Purpose: structural orientation — what the repository is, its shape, major subsystems, and dependency direction.
-   If `context/` does not exist: read `README.md` directly, summarise what you can determine about the project state, and recommend running a context upkeep pass to establish the memory layer before beginning serious work.
-   If `context/` exists but the architecture doc is missing: read what context files are present, then note that a full upkeep pass would strengthen the foundation.
-
-2. Read `context/notes.md` if it exists.
-   Purpose: project preferences, design rationale, guiding principles, and lessons from prior sessions. This gives you the *why* behind the current state — decisions that were made, things that were tried and abandoned, and constraints that should guide future work.
-   If `notes.md` does not exist: proceed without it, but be aware that you may lack context about why things are the way they are.
-
-3. Read additional `context/` files relevant to the session's likely focus.
-   Purpose: understand current implementation reality for the area you are about to work in.
-   Read the architecture doc (`architecture.html`, or `arch/data.js` for the raw content) and `notes.md` first, then pull specific system, plan, or reference files on demand as the task requires. Do not preload all of `context/` — that wastes attention on files you may not need.
-
-4. Read the root `README.md`.
-   Purpose: project intent, scope, philosophy, milestones, and roadmap. The README is the directional document — it should tell a reader what the project does, why it exists, how it is built, what decisions were made, and where it is going. As the project evolves, the README evolves with it.
-
-5. Summarise the current implementation state and active work.
-   Source: `README.md` and the `context/` files you have read. Confirm to the user what you understand and ask any focusing questions that materially shape the next step.
+At the start of every session, read the repository-root `AGENTS.md`, then `README.md`, relevant nested `AGENTS.md` files, and only the project-owned documents under `docs/` needed for the task. Code and tests determine implementation reality; README sets direction; scoped AGENTS files own operational constraints.
 
 ### Adapting to the Project
 
@@ -110,11 +88,11 @@ The configuration should always reflect current project reality. Do not silently
 | Source | Role | Rule |
 |--------|------|------|
 | `README.md` | Project intent, scope, direction, philosophy, milestones, roadmap | Directional source of truth; keep current as the project evolves; routine drift updates can be made directly with the change called out, substantial changes to mission, scope, or philosophy should be confirmed first |
-| `context/` | Repository memory, implementation-facing documentation | Main maintained view of current reality; updated continuously as the project changes |
+| `docs/` | Repository memory, implementation-facing documentation | Main maintained view of current reality; updated continuously as the project changes |
 | Code | Implementation reality | Verify details, resolve ambiguity, detect drift |
 | `<vault>/Learning/` | Cross-project educational archive (vault-side, at `~/Documents/life-os/Learning/`; Foundations + Domains + per-project + Pathways + Frontier.md layers) | Maintained centrally via the `upkeep-learning` skill across project invocations; per-project content lives at `<vault>/Learning/Projects/<Name>/`; not edited inline during routine work |
 
-If sources conflict: `README.md` sets intent, code determines reality, `context/` bridges the two. When `context/` says something the code disagrees with, the code wins and `context/` needs updating. When `README.md` describes a direction the code has not yet realised, both are valid — `README.md` is aspirational direction, code is current state.
+If sources conflict: `README.md` sets intent, code determines reality, `docs/` bridges the two. When `docs/` says something the code disagrees with, the code wins and `docs/` needs updating. When `README.md` describes a direction the code has not yet realised, both are valid — `README.md` is aspirational direction, code is current state.
 
 ---
 
@@ -135,17 +113,13 @@ These are not theoretical. They are the signatures of the failures that have bee
 
 ## Documentation Upkeep
 
-Keep `context/` current throughout the session. Make small, proportionate updates inline as the work changes the project. You have enough ambient understanding of the `context/` folder structure to handle routine maintenance without invoking the heavyweight upkeep skill, and `upkeep-context` is reserved for large passes when accumulated drift is too broad for inline edits to handle reliably.
-
-`<vault>/Learning/` is different — it is a cross-project educational archive maintained centrally via the `upkeep-learning` skill, not via inline edits. The skill's Phase 0 (vault-aware deduplication across projects), Phase Y (mechanical structural-integrity enforcement: ≤5 sibling files per folder, `_Overview.md` presence, frontmatter, no `Index.md`/nested `README.md`), and ephemeral-artefact lifecycle (`/tmp/upkeep-learning-<run-id>/`) all depend on running the full skill. Inline edits to vault `Learning/` during routine work would bypass cross-project deduplication (creating duplicates of universal foundations) and structural-integrity enforcement. When the project's per-project content (`<vault>/Learning/Projects/<Name>/`) needs initial creation, expansion, audit, or substantial update — or when a new domain surfaces that warrants Foundations/Domains additions — recommend `upkeep-learning` and ask before running.
-
-When accumulated drift is genuinely broad — many subsystems changed, architecture shifted, documentation has fragmented, a significant session is ending — recommend a full upkeep pass through the relevant skill. Name the specific skill, give a concrete reason, and ask before running it. Skills are heavy-weight; the personality handles the everyday `context/` work inline and surfaces a skill run only when the work cannot be done responsibly that way.
+Keep `README.md`, the nearest scoped `AGENTS.md`, and durable material under `docs/` current with the code. Put engineering rationale in `docs/engineering/`, research in `docs/research/`, design material in `docs/design/`, and active roadmaps in `docs/plans/`. Do not recreate a generated repository-memory layer.
 
 ---
 
 ## Note Capture
 
-When knowledge surfaces during normal work that the next session would need to act correctly, write a note in `context/notes/` immediately. Do not wait for an upkeep pass — by then the precise framing has decayed in the chat history and the value has been lost.
+When knowledge surfaces during normal work that the next session would need to act correctly, write a note in `docs/engineering/` immediately. Do not wait for an upkeep pass — by then the precise framing has decayed in the chat history and the value has been lost.
 
 The discrimination matters: notes are for **resolved knowledge**, not in-flight deliberation.
 
@@ -162,7 +136,7 @@ The discrimination matters: notes are for **resolved knowledge**, not in-flight 
 - decisions still in flight ("we are weighing X versus Y"),
 - speculative ideas neither party has committed to,
 - conversational asides with no durable engineering implication,
-- things already documented elsewhere in `context/`.
+- things already documented elsewhere in `docs/`.
 
 Notes for unresolved deliberation bloat the project, hurt working velocity, and create stale memory the moment the deliberation resolves differently. Notes for resolved knowledge make the next session smarter without adding noise.
 
@@ -172,7 +146,7 @@ When you capture a note, mention it briefly in chat ("noted that ..."), update `
 
 ## Live Obligation Tracking on Long Tasks
 
-For any task with more than ~15 tool calls or more than ~5 distinct obligations, maintain a live checklist — either inline in the chat or in a `context/plans/<topic>.md` file if the work is substantial. List each obligation, tick items as they are satisfied with the concrete evidence alongside (tool call reference, file path, search query, test name), and re-read the list every ~10 tool calls plus whenever you notice yourself repeating the same kind of action.
+For any task with more than ~15 tool calls or more than ~5 distinct obligations, maintain a live checklist — either inline in the chat or in a `docs/plans/<topic>.md` file if the work is substantial. List each obligation, tick items as they are satisfied with the concrete evidence alongside (tool call reference, file path, search query, test name), and re-read the list every ~10 tool calls plus whenever you notice yourself repeating the same kind of action.
 
 This is not ceremony — it is the structural mechanism that keeps obligations in recent attention. Drift in long sessions is a bounded equilibrium, not runaway decay, and periodic re-grounding measurably reduces it. Re-reading the original request plus the active skill's obligations also breaks self-conditioning: if you have quietly skipped a required action in early calls, re-reading the spec is the moment to catch it rather than inherit the skip for the rest of the session.
 
@@ -215,7 +189,7 @@ Default toward parallelisation. The wall-clock savings from parallel work almost
 
 **Prefer standard subagents.** They share the main working directory, see uncommitted changes, and avoid the commit-first dance and post-run reconciliation work that worktree isolation requires. For almost all parallel work — read-only exploration, analysis, modifications across disjoint file sets, parallel research — standard subagents are the right tool. They are simpler, faster to spawn, and avoid the failure modes that come from agents working off stale committed state. When in doubt, use a standard subagent.
 
-**Pack invocation prompts heavily.** The single biggest source of subagent failure is under-context. The subagent has none of your conversation history, none of the project preferences you have absorbed, and none of the implicit framing you are working from. Every invocation should include: the relevant architecture context, the specific files involved, the success criteria, the interfaces that must be preserved, the relevant project preferences from `context/notes/`, what has already been tried, what shape of output you want back, and any constraints the subagent could not infer from the files alone. Assume the subagent needs more context than you think — the cost of including extra is low, the cost of leaving the subagent to guess is high.
+**Pack invocation prompts heavily.** The single biggest source of subagent failure is under-context. The subagent has none of your conversation history, none of the project preferences you have absorbed, and none of the implicit framing you are working from. Every invocation should include: the relevant architecture context, the specific files involved, the success criteria, the interfaces that must be preserved, the relevant project preferences from `docs/engineering/`, what has already been tried, what shape of output you want back, and any constraints the subagent could not infer from the files alone. Assume the subagent needs more context than you think — the cost of including extra is low, the cost of leaving the subagent to guess is high.
 
 **Verify subagent work against the artefacts it changed, not against its summary.** Read the actual diff. Run tests or the changed code where feasible. Compare line-by-line against the intent you gave and the interfaces that had to be preserved. The subagent's own summary of what it did is the weakest possible signal — use it as a pointer to what to inspect, not as proof of correctness. Same-model self-verification (you, reading another instance's summary) has documented positive-bias: it feels convincing because the prose is polished. Evidence dominates polish. This verification is the safety system that makes aggressive parallelisation safe — it is not optional, and it should never be skipped because the summary "looked fine."
 
@@ -227,32 +201,9 @@ When you do use a worktree-isolated subagent, remember that it branches from the
 
 ---
 
-## Skill Ecosystem
+## Documentation and specialist tooling
 
-Four specialist skills support this workflow. Handle routine edits inline — invoke a skill only when the scope clearly exceeds what targeted edits can responsibly cover, and ask the user before running it.
-
-| Skill | What it does | Invoke when |
-|-------|-------------|-------------|
-| **upkeep-context** | Maintains `context/` — scans the repo, produces or updates `architecture.html` (via `arch/data.js`), `systems/*.md`, notes, plans, references | Broad drift, architectural shift, multiple subsystems changed, or misleading structure |
-| **upkeep-learning** | Maintains `<vault>/Learning/` — single accumulating educational archive across all projects; Foundations (universal CS, extensible) + Domains (problem-specific, adaptive) + per-project Projects + Pathways + Frontier layers; runs autonomously start-to-finish with phased execution and Phase Y structural-integrity enforcement | Project's `Learning/Projects/<Name>/` needs initialising, expansion, or substantial update; a new domain surfaces; cross-project foundations need enriching; broadly stale per-project material |
-| **project-research** | Produces durable research papers in `context/references/` with external research and project grounding | Deep technical investigation, approach comparison needing research, stale research artefact |
-| **code-health-audit** | Repository-wide analysis for dead code, performance, modularity, consistency, data layout, and risks — writes plan files to `context/plans/`, never edits source | Full health check, systematic debt identification, optimisation sweep |
-
-### How they relate
-
-```
-project-research  ──writes to──►  <repo>/context/references/
-code-health-audit ──writes to──►  <repo>/context/plans/
-upkeep-context    ──governs──────► <repo>/context/  (includes references/, plans/, notes/)
-                                   read by all other skills before generating output
-upkeep-learning   ──writes to──►  <vault>/Learning/  (cross-project archive in LifeOS vault)
-                                   reads <repo>/README.md, <repo>/context/, and existing
-                                   <vault>/Learning/ via vault-aware Phase 0
-```
-
-`upkeep-context` is the per-project foundation — it maintains the project model the other per-project skills read, and it governs plan lifecycle (ticking checkboxes, pruning completed plans). `upkeep-learning` operates orthogonally: it maintains the cross-project Learning archive in the LifeOS vault, separate from per-repo `context/`. Both stay in sync with project reality but operate on different artefacts at different cadences — `context/` evolves continuously inline; vault `Learning/` is updated through full skill runs that span Foundations / Domains / Projects layers.
-
-When recommending a skill run, name the skill, give a concrete reason, and wait for confirmation. Skills are heavy-weight operations — they consume significant context and should only be invoked when their scope is genuinely warranted.
+Use project-owned `README.md`, recursive `AGENTS.md`, and `docs/` as the durable knowledge layer. Research belongs in `docs/research/`; audits and substantial roadmaps belong in `docs/plans/`. Cross-project learning remains owned by the LifeOS vault workflow.
 
 ---
 
@@ -308,7 +259,7 @@ This is a structural gate, not an aspiration. Read it off the live checklist fro
 - cite file paths, modules, and symbols when discussing implementation,
 - compare implementation against intent, interfaces, and documentation,
 - flag correctness issues, interface drift, maintainability risks, and missing verification,
-- update `context/` as part of completing the work when the change materially affects it; if the change materially affects the project's vault `Learning/Projects/<Name>/` content, recommend an `upkeep-learning` run rather than editing the vault inline.
+- update `docs/` as part of completing the work when the change materially affects it; if the change materially affects the project's vault `Learning/Projects/<Name>/` content, recommend an `upkeep-learning` run rather than editing the vault inline.
 
 ---
 
@@ -330,12 +281,12 @@ Then make a recommendation. A confident single recommendation backed by clear re
 
 For each task:
 
-1. Ground the next step in `README.md`, `context/`, and the current conversation.
+1. Ground the next step in `README.md`, `docs/`, and the current conversation.
 2. Clarify scope, trade-offs, and likely impact.
 3. Execute proportionately — implement, refactor, debug, or review as the task requires.
 4. **Obligation audit before declaring the task done.** Enumerate every obligation from the active skill (or, outside a skill, the obligations implied by the user's request). For each, cite concrete evidence (tool call, file path, search query, test name) or declare it skipped with reason. If any is skipped, surface it to the user before handing back. Read this off the Live Obligation Tracking checklist, not from memory.
 5. Capture any notes that surfaced during the work.
-6. Update `context/` where the completed change created real drift. Vault `Learning/` is maintained via the `upkeep-learning` skill — recommend a run if the change materially affects the project's per-project Learning content rather than editing the vault inline.
+6. Update `docs/` where the completed change created real drift. Vault `Learning/` is maintained via the `upkeep-learning` skill — recommend a run if the change materially affects the project's per-project Learning content rather than editing the vault inline.
 7. Tick checkboxes in active plan files as items complete; remove plans whose criteria are fully met.
 8. Commit at logical checkpoints with a comprehensive message.
 9. If drift now appears broader than local upkeep can responsibly cover, recommend a fuller upkeep pass and ask.

@@ -31,7 +31,7 @@ There are two philosophies, and the interesting answer is counterintuitive:
   - `runtime.rs` — spawns shard threads, pins them to cores (`core_affinity` crate), routes orders to the correct shard by symbol.
 - `Cargo.toml` — `crossbeam`, `core_affinity`.
 - `src/main.rs` — `--concurrent [--shards N]` mode.
-- `context/references/concurrency-design.md` (new) — the written architecture + trade-off note (the artefact an interviewer would read).
+- `docs/research/concurrency-design.md` (new) — the written architecture + trade-off note (the artefact an interviewer would read).
 
 ### Architecture
 
@@ -89,5 +89,5 @@ order sources ──▶ [ingress ring] ──▶ BookShard(thread, pinned core)
 - [ ] Benchmark harness measures concurrent-ingress latency + throughput; near-linear scaling shown (and the ceiling explained).
 - [ ] Per-shard determinism preserved and tested.
 - [ ] No `unsafe`, no hot-path locks (both grep-verified).
-- [ ] `context/references/concurrency-design.md` explains single-writer-sharding vs lock-free-shared, cites the Disruptor, and argues the choice.
+- [ ] `docs/research/concurrency-design.md` explains single-writer-sharding vs lock-free-shared, cites the Disruptor, and argues the choice.
 - [ ] This file is archived once all the above are checked.

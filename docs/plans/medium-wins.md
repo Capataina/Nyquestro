@@ -55,7 +55,7 @@ Items:
 
 ## 3. Latency post-mortem (a written artefact)
 
-- **What:** A single document (`context/references/latency-postmortem.md` or a README-linked write-up) that takes **one** optimisation from item 1, and tells the story: baseline numbers → what the profiler/counters showed was slow → the change → after numbers → what it cost. With real evidence (benchmark output, and ideally CPU-counter or sampling-profiler data).
+- **What:** A single document (`docs/research/latency-postmortem.md` or a README-linked write-up) that takes **one** optimisation from item 1, and tells the story: baseline numbers → what the profiler/counters showed was slow → the change → after numbers → what it cost. With real evidence (benchmark output, and ideally CPU-counter or sampling-profiler data).
 - **Why for hiring:** This one *document* is worth more than several features. It demonstrates the actual craft — honest measurement, root-causing a tail, a change justified by evidence, and a re-measurement — which is precisely what the job is. It's also the perfect thing to walk an interviewer through.
 - **Steps:**
   - [ ] Pick one change from item 1 (the cancel O(n)→O(1) is a clean, legible story).
